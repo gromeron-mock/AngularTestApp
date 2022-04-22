@@ -3,10 +3,11 @@ on:
   push:
     branches:
       - 'master'
+
 jobs:
-  job1:
-    name: Create team branches
+  create-team-branches:
     runs-on: ubuntu-latest
+    name: Create team branches
     steps:
     - name: Repository checkout
       uses: actions/checkout@v3
