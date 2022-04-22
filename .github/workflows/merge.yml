@@ -6,10 +6,64 @@ on:
       - 'hotfix**'
 
 jobs:
-  build-and-test:
-  runs-on: ubuntu-latest
-  name: Build and test
-  steps:
-    - uses: actions/checkout@v3
-    - uses: ng-easy/npm-install@v1
-    - run: npm run build
+  build-and-test-local:
+    runs-on: ubuntu-latest
+    name: Build and test local branch
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ng-easy/npm-setup@v1
+      - run: npm run build
+  merge-to-develop:
+    name: Merge local branch to develop
+    needs: build-and-test-local
+    runs-on: ubuntu-latest
+    steps:
+    - name: Merge local branch to develop
+      if:
+        contains(github.event.head_commit.message, '[MERGE2DEVELOP]') ||
+        contains(github.event.head_commit.message, '[MERGE2DEV]')
+      uses: tukasz/direct-merge-action@master
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        source-branch: ${{ github.ref }}
+        target-branch: develop
+  build-and-test-develop:
+    runs-on: ubuntu-latest
+    name: Build and test develop branch
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ng-easy/npm-setup@v1
+      - run: npm run build
+  merge-to-release:
+    name: Merge develop branch to release
+    needs: build-and-test-develop
+    runs-on: ubuntu-latest
+    steps:
+    - name: Merge develop branch to release
+      if:
+        ${{ contains(github.event.head_commit.message, '[MERGE2RELEASE]') }}
+      uses: tukasz/direct-merge-action@master
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        source-branch: ${{ github.ref }}
+        target-branch: release
+  build-and-test-release:
+    runs-on: ubuntu-latest
+    name: Build and test release branch
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ng-easy/npm-setup@v1
+      - run: npm run build
+  merge-to-master:
+    name: Merge release branch to master
+    needs: build-and-test-release
+    runs-on: ubuntu-latest
+    steps:
+    - name: Merge release branch to master
+      if:
+        ${{ contains(github.event.head_commit.message, '[MERGE2MASTER]') }}
+      uses: tukasz/direct-merge-action@master
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        source-branch: ${{ github.ref }}
+        target-branch: master
