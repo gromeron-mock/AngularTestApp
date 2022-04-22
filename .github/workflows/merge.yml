@@ -11,5 +11,5 @@ jobs:
     name: Build and test
     steps:
       - uses: actions/checkout@v2
-      - uses: ng-easy/npm-install@v1
+      - uses: ng-easy/npm-setup@v1
       - run: npm run build
