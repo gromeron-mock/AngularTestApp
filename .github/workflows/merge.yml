@@ -10,6 +10,20 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and test
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: ng-easy/npm-setup@v1
       - run: npm run build
+  merge-to-develop:
+    name: Merge local branch to develop
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Merge local branch to develop
+      if:
+        contains(github.event.head_commit.message, '[MERGE2DEVELOP]') ||
+        contains(github.event.head_commit.message, '[MERGE2DEV]')
+      uses: tukasz/direct-merge-action@master
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        source-branch: ${{ github.ref }}
+        target-branch: develop
