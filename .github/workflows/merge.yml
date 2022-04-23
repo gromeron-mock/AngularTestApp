@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ng-easy/npm-setup@v1
-      - run: ng t
+      - run: npm t
   merge-to-develop:
     name: Merge local branch to develop
     needs: build-and-test-local
@@ -38,7 +38,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ng-easy/npm-setup@v1
-      - run: npm run test
+      - run: npm t
   merge-to-release:
     name: Merge develop branch to release
     needs: build-and-test-develop
@@ -60,7 +60,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ng-easy/npm-setup@v1
-      - run: npm run test
+      - run: npm t
   merge-to-master:
     name: Merge release branch to master
     needs: build-and-test-release
