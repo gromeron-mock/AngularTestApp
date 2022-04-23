@@ -9,10 +9,13 @@ jobs:
   build-and-test-local:
     runs-on: ubuntu-latest
     name: Build and test local branch
+    if:
+      contains(github.event.head_commit.message, '[MERGE2DEVELOP]') ||
+      contains(github.event.head_commit.message, '[MERGE2DEV]')
     steps:
       - uses: actions/checkout@v3
       - uses: ng-easy/npm-setup@v1
-      - run: npm run build
+      - run: npm run watch
   merge-to-develop:
     name: Merge local branch to develop
     needs: build-and-test-local
@@ -30,10 +33,12 @@ jobs:
   build-and-test-develop:
     runs-on: ubuntu-latest
     name: Build and test develop branch
+    if:
+      ${{ contains(github.event.head_commit.message, '[MERGE2RELEASE]') }}
     steps:
       - uses: actions/checkout@v3
       - uses: ng-easy/npm-setup@v1
-      - run: npm run build
+      - run: npm run watch
   merge-to-release:
     name: Merge develop branch to release
     needs: build-and-test-develop
@@ -50,10 +55,12 @@ jobs:
   build-and-test-release:
     runs-on: ubuntu-latest
     name: Build and test release branch
+    if:
+      ${{ contains(github.event.head_commit.message, '[MERGE2MASTER]') }}
     steps:
       - uses: actions/checkout@v3
       - uses: ng-easy/npm-setup@v1
-      - run: npm run build
+      - run: npm run watch
   merge-to-master:
     name: Merge release branch to master
     needs: build-and-test-release
