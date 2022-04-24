@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ng-easy/npm-setup@v1
-      - run: npm run buind
+      - run: npm run build
   merge-to-develop:
     name: Merge local branch to develop
     needs: build-and-test-local
